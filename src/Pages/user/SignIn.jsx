@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { UserSignIN } from "../../APIs/userAPIs";
+import { useContext } from "react";
+import { UserTocken } from "../../context/GlobleStates";
 
 function SignIn(params) {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let { tocken, setTocken } = useContext(UserTocken);
+  //let = useContext(UserTocken);
 
   const handleUserLogin = async (e) => {
     e.preventDefault();
     console.log("Email:", email);
-    console.log("Paa");
-  };
+    console.log("Password:", password);
 
+    const data = await UserSignIN(email, password);
+
+    if (data) {
+      setTocken(data.data);
+    }
+
+    console.log(data.data);
+  };
+  useEffect(() => {
+    console.log("Tocken:", tocken);
+  }, [tocken]);
   return (
     <div className="min-h-screen w-full bg-white">
       <main className="flex justify-center px-4 py-12 sm:py-16">

@@ -6,20 +6,25 @@ import MainLayout from "../components/Layout/MainLayout";
 import Navbar from "../components/Navbar/Navbar";
 import Signup from "../Pages/user/Signup";
 import SignIn from "../Pages/user/SignIn";
+import { UserTocken } from "../context/GlobleStates";
+import { useState } from "react";
 
 function Routing(params) {
   const Queryclient = new QueryClient();
+  const [tocken, setTocken] = useState("");
   return (
     <>
       <Navbar />
-      <QueryClientProvider client={Queryclient}>
-        <Routes>
-          <Route path="/" element={<MainLayout />} />
-          <Route path="/detail/:id" element={<PostDetail />} />
-          <Route path="/user/signup" element={<Signup />} />
-          <Route path="/user/singin" element={<SignIn />} />
-        </Routes>
-      </QueryClientProvider>
+      <UserTocken.Provider value={{ tocken, setTocken }}>
+        <QueryClientProvider client={Queryclient}>
+          <Routes>
+            <Route path="/" element={<MainLayout />} />
+            <Route path="/detail/:id" element={<PostDetail />} />
+            <Route path="/user/signup" element={<Signup />} />
+            <Route path="/user/singin" element={<SignIn />} />
+          </Routes>
+        </QueryClientProvider>
+      </UserTocken.Provider>
     </>
   );
 }
