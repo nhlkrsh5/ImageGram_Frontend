@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { UserSignIN } from "../../APIs/userAPIs";
+import { GetUserDetail, UserSignIN } from "../../APIs/userAPIs";
 import { useContext } from "react";
-import { UserTocken } from "../../context/GlobleStates";
+import { CurrUser, UserTocken } from "../../context/GlobleStates";
+import { useNavigate } from "react-router-dom";
 
 function SignIn(params) {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let { tocken, setTocken } = useContext(UserTocken);
+  let { user, setUser } = useContext(CurrUser);
+  const navigate = useNavigate();
   //let = useContext(UserTocken);
 
   const handleUserLogin = async (e) => {
@@ -23,8 +26,34 @@ function SignIn(params) {
     console.log(data.data);
   };
   useEffect(() => {
-    console.log("Tocken:", tocken);
+    async function GetUser() {
+      try {
+        const data = await GetUserDetail(tocken);
+
+        console.log(data);
+        if (!data) {
+          throw new Error("User not found!");
+        } else {
+          setUser((prevUser) => ({
+            ...prevUser,
+            username: data.data.username,
+            email: data.data.email,
+            role: data.data.role,
+          }));
+        }
+        navigate("/");
+      } catch (error) {
+        console.log("Getting user problem:", error);
+      }
+    }
+    GetUser();
   }, [tocken]);
+
+  useEffect(() => {
+    console.log("Globel state", user.email);
+    console.log("Globel state", user.username);
+    console.log("Globle state:", user.role);
+  }, [user]);
   return (
     <div className="min-h-screen w-full bg-white">
       <main className="flex justify-center px-4 py-12 sm:py-16">

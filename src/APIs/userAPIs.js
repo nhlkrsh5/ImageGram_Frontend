@@ -26,3 +26,18 @@ export const UserSignIN = async (email,password) => {
         console.log("USer Sign in problem:",error);
     }
 }
+
+export const GetUserDetail = async (tocken) => {
+    console.log("Tocken Detail:",tocken);
+    
+    try {
+        const response = await axios.get("https://imagegram-2-pi20.onrender.com/api/v1/user/profile",{
+            headers:{
+                'x-access-tocken':tocken
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("User Detail in problem:",error);
+    }
+}
