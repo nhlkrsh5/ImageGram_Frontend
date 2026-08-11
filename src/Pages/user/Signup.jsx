@@ -25,17 +25,17 @@ function Signup() {
     console.log("email", email);
     console.log("Password", password);
     console.log("Confim pass", connpass);
-    toast.success("User created");
 
-    /*if (password === connpass) {
+    if (password === connpass) {
       const data = await UserRegister(username, email, password);
 
       if (data) {
         console.log(data);
         toast("User created");
+        toast.success("User created");
         ClearData();
       }
-    }*/
+    }
   };
   return (
     <div className="min-h-screen w-full bg-white">

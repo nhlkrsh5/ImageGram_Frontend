@@ -1,29 +1,87 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../Buttons/Button";
-import { CurrUser } from "../../context/GlobleStates";
+import { CurrUser, UserTocken } from "../../context/GlobleStates";
 import { useContext } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import User_img from "../../assets/User.avif";
 
 function Navbar(params) {
   const navigate = useNavigate();
-  let { user } = useContext(CurrUser);
+  let { user, setUser } = useContext(CurrUser);
+  let { tocken, setTocken } = useContext(UserTocken);
   function UserSignUp() {
     navigate("/user/signup");
   }
+
+  function UserLogin(params) {
+    navigate("/user/singin");
+  }
+
+  function userLogout(params) {
+    setUser((prevUser) => ({
+      ...prevUser,
+      username: "",
+      email: "",
+      role: "",
+    }));
+    setTocken("");
+    //toast("User Logout..");
+  }
+
+  function UserProfile() {
+    navigate("/user/profile");
+  }
   return (
-    <div className="navbar flex justify-between bg-base-100 shadow-sm">
-      <div className="flex">
-        <a className="btn btn-ghost text-xl">ImageGram</a>
+    <>
+      <div className="navbar flex justify-between bg-base-100 shadow-sm">
+        <div className="flex">
+          <a className="btn btn-ghost text-xl">ImageGram</a>
+        </div>
+        <div className="flex">
+          <div className="flex gap-2">
+            {user.username == "" && (
+              <>
+                <Button onclick={UserLogin} text="SignIn" type="btn-primary" />
+                <Button onclick={UserSignUp} text="SignUp" type="btn-primary" />
+              </>
+            )}
+            {user.username && (
+              <div className="dropdown dropdown-end">
+                <div className="flex justify-center">
+                  <div className="mt-2">
+                    {user.username && <p>{user.username}</p>}
+                  </div>
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-ghost btn-circle avatar"
+                  >
+                    <div className="w-10 rounded-full">
+                      <img alt="Tailwind CSS Navbar component" src={User_img} />
+                    </div>
+                  </div>
+                </div>
+                <ul
+                  tabIndex="-1"
+                  className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                >
+                  <li>
+                    <a onClick={UserProfile} className="justify-between">
+                      Profile
+                      <span className="badge">New</span>
+                    </a>
+                  </li>
+
+                  <li>
+                    <a onClick={userLogout}>Logout</a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <div className="flex gap-2">
-        {user.username == "" && (
-          <>
-            <Button text="SignIn" type="btn-primary" />
-            <Button onclick={UserSignUp} text="SignUp" type="btn-primary" />
-          </>
-        )}
-        {user.username && <Button text="Logout" type="btn-primary" />}
-      </div>
-    </div>
+    </>
   );
 }
 export default Navbar;

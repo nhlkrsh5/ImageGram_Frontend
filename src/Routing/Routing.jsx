@@ -9,6 +9,7 @@ import SignIn from "../Pages/user/SignIn";
 import { UserTocken } from "../context/GlobleStates";
 import { CurrUser } from "../context/GlobleStates";
 import { useState } from "react";
+import Profile from "../Pages/user/Profile";
 
 function Routing(params) {
   const Queryclient = new QueryClient();
@@ -16,15 +17,17 @@ function Routing(params) {
   const [user, setUser] = useState({ username: "", email: "", role: "" });
   return (
     <>
-      <Navbar />
+      <CurrUser.Provider value={{ user, setUser }}></CurrUser.Provider>
       <CurrUser.Provider value={{ user, setUser }}>
         <UserTocken.Provider value={{ tocken, setTocken }}>
           <QueryClientProvider client={Queryclient}>
+            <Navbar />
             <Routes>
               <Route path="/" element={<MainLayout />} />
               <Route path="/detail/:id" element={<PostDetail />} />
               <Route path="/user/signup" element={<Signup />} />
               <Route path="/user/singin" element={<SignIn />} />
+              <Route path="/user/profile" element={<Profile />} />
             </Routes>
           </QueryClientProvider>
         </UserTocken.Provider>
