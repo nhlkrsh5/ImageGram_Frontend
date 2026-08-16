@@ -39,7 +39,7 @@ function Navbar(params) {
         </div>
         <div className="flex">
           <div className="flex gap-2">
-            {user.username == "" && (
+            {user && user.username == "" && (
               <>
                 <Button onclick={UserLogin} text="SignIn" type="btn-primary" />
                 <Button onclick={UserSignUp} text="SignUp" type="btn-primary" />

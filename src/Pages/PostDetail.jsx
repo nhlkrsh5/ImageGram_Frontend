@@ -3,10 +3,14 @@ import { fetchSinglePost } from "../APIs/fetchAPIs.js";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
+import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
+import { useContext } from "react";
 
 function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { tocken } = useContext(UserTocken);
+  const { user } = useContext(CurrUser);
 
   let { data, isLoading, isError } = useQuery({
     queryKey: ["SignlePost", id],
@@ -17,11 +21,13 @@ function PostDetail() {
     return <Loader />;
   }
   if (isError || !data) {
-    console.log("Post", post);
-  } else {
-    console.log(data.data);
+    console.log("Error");
   }
   const post = data.data;
+
+  const handleDeleteButton = () => {
+    alert("Delete");
+  };
   return (
     <article className="max-w-3xl mx-auto px-4 py-10">
       {/* Back button */}
@@ -48,7 +54,16 @@ function PostDetail() {
           Comments {post.comments.length}
         </span>
       </div>
-
+      <span>
+        {user.email == data.data.user.email && (
+          <button
+            onClick={handleDeleteButton}
+            className="cursor-pointer px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300"
+          >
+            Delete
+          </button>
+        )}
+      </span>
       {/* Title */}
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
         {post.caption}

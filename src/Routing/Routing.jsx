@@ -10,6 +10,7 @@ import { UserTocken } from "../context/GlobleStates";
 import { CurrUser } from "../context/GlobleStates";
 import { useState } from "react";
 import Profile from "../Pages/user/Profile";
+import PostUplaod from "../Pages/post/PostUplaod";
 
 function Routing(params) {
   const Queryclient = new QueryClient();
@@ -17,7 +18,7 @@ function Routing(params) {
   const [user, setUser] = useState({ username: "", email: "", role: "" });
   return (
     <>
-      <CurrUser.Provider value={{ user, setUser }}></CurrUser.Provider>
+      {/*<CurrUser.Provider value={{ user, setUser }}></CurrUser.Provider>*/}
       <CurrUser.Provider value={{ user, setUser }}>
         <UserTocken.Provider value={{ tocken, setTocken }}>
           <QueryClientProvider client={Queryclient}>
@@ -28,6 +29,7 @@ function Routing(params) {
               <Route path="/user/signup" element={<Signup />} />
               <Route path="/user/singin" element={<SignIn />} />
               <Route path="/user/profile" element={<Profile />} />
+              <Route path="/post/upload" element={<PostUplaod />} />
             </Routes>
           </QueryClientProvider>
         </UserTocken.Provider>

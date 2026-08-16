@@ -1,43 +1,41 @@
+import { useContext, useEffect, useState } from "react";
 import UserImage from "../../assets/User.avif";
+import { UserTocken, CurrUser } from "../../context/GlobleStates";
+import { GetUserPostANDdetail } from "../../APIs/userAPIs.js";
+import { useNavigate } from "react-router-dom";
 
 // Placeholder data — swap for real props/state later
-const user = {
-  username: "jane_doe",
-  email: "jane@example.com",
-  role: "member",
-};
-
-const posts = [
-  {
-    id: 1,
-    image: "https://picsum.photos/seed/1/600/600",
-    caption: "Golden hour on the rooftop",
-  },
-  {
-    id: 2,
-    image: "https://picsum.photos/seed/2/600/600",
-    caption: "Coffee, notebook, quiet morning",
-  },
-  {
-    id: 3,
-    image: "https://picsum.photos/seed/3/600/600",
-    caption: "Weekend hike, north trail",
-  },
-  {
-    id: 4,
-    image: "https://picsum.photos/seed/4/600/600",
-    caption: "New lens, same old street",
-  },
-  {
-    id: 5,
-    image: "https://picsum.photos/seed/5/600/600",
-    caption: "Late night studio session",
-  },
-];
 
 function Profile() {
-  const frameTotal = posts.length;
+  let { tocken, setTocken } = useContext(UserTocken);
+  const [data, setddata] = useState();
+  let { user, setUser } = useContext(CurrUser);
+  const naviagte = useNavigate();
 
+  useEffect(() => {
+    if (!user || !tocken) {
+      //alert("Session exepire");
+      naviagte("/");
+    }
+    console.log("tocken", tocken);
+
+    async function GetPost(tocken) {
+      const data1 = await GetUserPostANDdetail(tocken);
+      setddata(data1.data);
+      console.log(data1.data);
+    }
+    GetPost(tocken);
+  }, [tocken]);
+
+  const hangleLogout = () => {
+    alert("log out");
+    setUser({});
+    setTocken("");
+  };
+
+  const hanglePostUpload = () => {
+    naviagte("/post/upload");
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-24">
       {/* Background Pattern */}
@@ -59,11 +57,7 @@ function Profile() {
             <div className="relative shrink-0">
               <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-pink-400 to-purple-400 rounded-full blur opacity-70 group-hover:opacity-100 transition duration-1000" />
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                <img
-                  src={UserImage}
-                  alt={user.username}
-                  className="w-full h-full object-cover"
-                />
+                <img src={UserImage} className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-1 -right-1 bg-emerald-400 w-5 h-5 rounded-full border-2 border-white shadow-lg" />
             </div>
@@ -102,23 +96,16 @@ function Profile() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  <span className="text-sm font-mono">
-                    {String(frameTotal).padStart(3, "0")} exposures
-                  </span>
+                  ></svg>
                 </div>
               </div>
             </div>
 
             {/* Logout Button */}
-            <button className="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-red-200 flex items-center gap-2 shrink-0">
+            <button
+              onClick={hangleLogout}
+              className="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-red-200 flex items-center gap-2 shrink-0"
+            >
               <svg
                 className="w-5 h-5 group-hover:rotate-12 transition-transform"
                 fill="none"
@@ -139,24 +126,41 @@ function Profile() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4 mb-10">
-          {[
-            { label: "Posts", value: frameTotal, icon: "📸" },
-            { label: "Followers", value: "2.4K", icon: "👥" },
-            { label: "Following", value: "183", icon: "🔗" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center hover:shadow-xl transition-shadow"
+          {[{ label: "Posts", value: data && data.length, icon: "📸" }].map(
+            (stat, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 text-center hover:shadow-xl transition-shadow"
+              >
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">
+                  {stat.label}
+                </div>
+              </div>
+            ),
+          )}
+          <button
+            onClick={hanglePostUpload}
+            className="cursor-pointer justify-center text-center flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white font-medium rounded-xl hover:from-amber-500 hover:to-orange-500 transition-all duration-300 shadow-lg hover:shadow-amber-200 text-2xl"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <div className="text-2xl mb-1">{stat.icon}</div>
-              <div className="text-2xl font-bold text-gray-800">
-                {stat.value}
-              </div>
-              <div className="text-xs text-gray-500 uppercase tracking-wider">
-                {stat.label}
-              </div>
-            </div>
-          ))}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span className="text-center">ADD POST</span>
+          </button>
         </div>
 
         {/* Divider */}
@@ -174,27 +178,15 @@ function Profile() {
         {/* Contact Sheet */}
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-            <span>📷</span> Contact Sheet
+            <span>📷</span> Posts
           </h2>
-          <span className="font-mono text-sm text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm">
-            FRAME 001–{String(frameTotal).padStart(3, "0")}
-          </span>
         </div>
 
         {/* Grid */}
-        {frameTotal === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100">
-            <div className="text-6xl mb-4">🎞️</div>
-            <p className="font-mono text-sm tracking-wide text-gray-600">
-              NO EXPOSURES YET
-            </p>
-            <p className="text-xs text-gray-400 mt-2">
-              Posts you publish will show up here.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {posts.map((post, i) => (
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {data &&
+            data.map((post, i) => (
               <div
                 key={post.id}
                 className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
@@ -240,8 +232,7 @@ function Profile() {
                 </div>
               </div>
             ))}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

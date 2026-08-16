@@ -41,3 +41,17 @@ export const GetUserDetail = async (tocken) => {
         console.log("User Detail in problem:",error);
     }
 }
+
+export const GetUserPostANDdetail = async (tocken) => {
+    try {
+        const response = await axios.get("https://imagegram-2-pi20.onrender.com/api/v1/user/post",{
+            headers: {
+                'x-access-tocken': tocken
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.log("User deshbod in problem:",error);
+    }
+}

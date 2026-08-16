@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserRegister } from "../../APIs/userAPIs";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 function Signup() {
   /* let [form, setform] = useState({
     username: "",
@@ -8,6 +9,7 @@ function Signup() {
     password: "",
     con_pass: "",
   });*/
+  const navigate = useNavigate();
   let [username, setUsername] = useState("");
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
@@ -33,6 +35,7 @@ function Signup() {
         console.log(data);
         toast("User created");
         toast.success("User created");
+        navigate("/user/singin");
         ClearData();
       }
     }
