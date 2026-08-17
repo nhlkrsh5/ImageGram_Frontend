@@ -31,11 +31,17 @@ function Navbar(params) {
   function UserProfile() {
     navigate("/user/profile");
   }
+
+  const RedirectTOHome = () => {
+    navigate("/");
+  };
   return (
     <>
       <div className="navbar flex justify-between bg-base-100 shadow-sm">
         <div className="flex">
-          <a className="btn btn-ghost text-xl">ImageGram</a>
+          <a onClick={RedirectTOHome} className="btn btn-ghost text-xl">
+            ImageGram
+          </a>
         </div>
         <div className="flex">
           <div className="flex gap-2">

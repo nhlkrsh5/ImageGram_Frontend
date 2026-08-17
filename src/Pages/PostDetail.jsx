@@ -4,13 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
 import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { PostDelete } from "../APIs/postAPIs.js";
 
 function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { tocken } = useContext(UserTocken);
   const { user } = useContext(CurrUser);
+  const [loading, setLoader] = useState(false);
 
   let { data, isLoading, isError } = useQuery({
     queryKey: ["SignlePost", id],
@@ -24,9 +26,25 @@ function PostDetail() {
     console.log("Error");
   }
   const post = data.data;
+  console.log(post);
 
-  const handleDeleteButton = () => {
-    alert("Delete");
+  const handleDeleteButton = async (postId) => {
+    //console.log("PostId:", post._id);
+    setLoader(true);
+    try {
+      const data = await PostDelete(postId, tocken);
+
+      if (data) {
+        console.log("post Deleted:", data);
+
+        alert("Delete:" + postId);
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("Delete problem:", error);
+    } finally {
+      setLoader(false);
+    }
   };
   return (
     <article className="max-w-3xl mx-auto px-4 py-10">
@@ -57,10 +75,11 @@ function PostDetail() {
       <span>
         {user.email == data.data.user.email && (
           <button
-            onClick={handleDeleteButton}
+            disabled={loading}
+            onClick={() => handleDeleteButton(post._id)}
             className="cursor-pointer px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300"
           >
-            Delete
+            {loading ? "Deleting..." : "Delete"}
           </button>
         )}
       </span>

@@ -22,3 +22,16 @@ export const UploadPost = async (caption,file,userId,tocken) => {
         throw error;  // Re
     }
 }
+
+export const PostDelete = async(id,tocken)=>{
+    try {
+        const response = await axios.delete(`https://imagegram-2-pi20.onrender.com/api/v1/post/${id}`,{
+            headers:{
+                'x-access-tocken': tocken
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
