@@ -5,7 +5,7 @@ import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
 import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
 import { useContext, useState } from "react";
-import { PostDelete } from "../APIs/postAPIs.js";
+import { LikeOnAPost, PostDelete } from "../APIs/postAPIs.js";
 
 function PostDetail() {
   const { id } = useParams();
@@ -13,6 +13,7 @@ function PostDetail() {
   const { tocken } = useContext(UserTocken);
   const { user } = useContext(CurrUser);
   const [loading, setLoader] = useState(false);
+  const [like, setLike] = useState(false);
 
   let { data, isLoading, isError } = useQuery({
     queryKey: ["SignlePost", id],
@@ -46,6 +47,28 @@ function PostDetail() {
       setLoader(false);
     }
   };
+
+  const handleUpdateButton = async (postId) => {
+    alert("Update" + postId);
+    try {
+    } catch (error) {
+      console.log("Update post:", error);
+    } finally {
+    }
+  };
+
+  const handleLikeEvent = async (id) => {
+    alert("liked" + id);
+    try {
+      const data = await LikeOnAPost(id, tocken);
+
+      if (data) {
+        setLike(!like);
+      }
+    } catch (error) {
+      console.log("Error from like:", error);
+    }
+  };
   return (
     <article className="max-w-3xl mx-auto px-4 py-10">
       {/* Back button */}
@@ -72,6 +95,59 @@ function PostDetail() {
           Comments {post.comments.length}
         </span>
       </div>
+      <div className="flex items-center gap-4">
+        {/* Like Button */}
+        <button
+          onClick={() => handleLikeEvent(post._id)}
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-700 "
+        >
+          {like ? (
+            <svg
+              className="w-5 h-5 fill-amber-700 stroke-current"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="w-5 h-5 fill-none stroke-current"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          )}
+          <span className="font-medium">{post.likes.length}</span>
+        </button>
+
+        {/* Comment Button */}
+        <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200">
+          <svg
+            className="w-5 h-5 fill-none stroke-current"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+          <span className="font-medium">Comment</span>
+        </button>
+      </div>
       <span>
         {user.email == data.data.user.email && (
           <button
@@ -81,6 +157,23 @@ function PostDetail() {
           >
             {loading ? "Deleting..." : "Delete"}
           </button>
+        )}
+        {user.role == "admin" && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleUpdateButton(post._id)}
+              className="cursor-pointer px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition duration-300"
+            >
+              Ban post
+            </button>
+            <button
+              disabled={loading}
+              onClick={() => handleDeleteButton(post._id)}
+              className="cursor-pointer px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300"
+            >
+              {loading ? "Deleting..." : "Delete"}
+            </button>
+          </div>
         )}
       </span>
       {/* Title */}

@@ -35,3 +35,22 @@ export const PostDelete = async(id,tocken)=>{
         throw error;
     }
 }
+
+export const LikeOnAPost = async (postId,tocken) => {
+    console.log("Tocken from LIke: "+tocken);
+    
+    try {
+       const response = await axios.post(
+        `https://imagegram-2-pi20.onrender.com/api/v1/post/${postId}/likes`,
+        {}, //for body
+        {
+            headers: {
+                //'Authorization': `Bearer ${tocken}`,
+                'x-access-tocken': tocken
+            }
+       });
+       return response.data;
+    } catch (error) {
+        throw error
+    }
+}
