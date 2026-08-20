@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
 import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LikeOnAPost, PostDelete } from "../APIs/postAPIs.js";
 
 function PostDetail() {
@@ -16,7 +16,7 @@ function PostDetail() {
   const [like, setLike] = useState(false);
 
   let { data, isLoading, isError } = useQuery({
-    queryKey: ["SignlePost", id],
+    queryKey: ["SignlePost", id, like],
     queryFn: () => fetchSinglePost(id),
   });
 
@@ -62,7 +62,10 @@ function PostDetail() {
     try {
       const data = await LikeOnAPost(id, tocken);
 
-      if (data) {
+      if (data.message == "ALready liked") {
+        setLike(true);
+        console.log("Already LikeData:", data);
+      } else {
         setLike(!like);
       }
     } catch (error) {
