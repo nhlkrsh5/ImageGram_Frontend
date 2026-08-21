@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GetUserDetail, UserSignIN } from "../../APIs/userAPIs";
 import { useContext } from "react";
 import { CurrUser, UserTocken } from "../../context/GlobleStates";
@@ -10,6 +10,8 @@ function SignIn(params) {
   let { tocken, setTocken } = useContext(UserTocken);
   let { user, setUser } = useContext(CurrUser);
   const navigate = useNavigate();
+  const [loading, setLoader] = useState(false);
+  const isFirstRender = useRef(true);
   //let = useContext(UserTocken);
 
   const handleUserLogin = async (e) => {
@@ -26,7 +28,12 @@ function SignIn(params) {
     console.log(data.data);
   };
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     async function GetUser() {
+      setLoader(true);
       try {
         const data = await GetUserDetail(tocken);
 
@@ -45,16 +52,13 @@ function SignIn(params) {
         navigate("/");
       } catch (error) {
         console.log("Getting user problem:", error);
+      } finally {
+        setLoader(false);
       }
     }
     GetUser();
   }, [tocken]);
 
-  useEffect(() => {
-    console.log("Globel state", user.email);
-    console.log("Globel state", user.username);
-    console.log("Globle state:", user.role);
-  }, [user]);
   return (
     <div className="min-h-screen w-full bg-white">
       <main className="flex justify-center px-4 py-12 sm:py-16">
@@ -111,7 +115,11 @@ function SignIn(params) {
               className="w-full rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-2.5 transition-colors mt-2"
               onClick={handleUserLogin}
             >
-              Login
+              {loading ? (
+                <span className="loading loading-spinner loading-xl"></span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>

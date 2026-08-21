@@ -9,6 +9,7 @@ function Signup() {
     password: "",
     con_pass: "",
   });*/
+  const [loading, setLoader] = useState(false);
   const navigate = useNavigate();
   let [username, setUsername] = useState("");
   let [email, setEmail] = useState("");
@@ -27,17 +28,23 @@ function Signup() {
     console.log("email", email);
     console.log("Password", password);
     console.log("Confim pass", connpass);
+    try {
+      setLoader(true);
+      if (password === connpass) {
+        const data = await UserRegister(username, email, password);
 
-    if (password === connpass) {
-      const data = await UserRegister(username, email, password);
-
-      if (data) {
-        console.log(data);
-        toast("User created");
-        toast.success("User created");
-        navigate("/user/singin");
-        ClearData();
+        if (data) {
+          console.log(data);
+          toast("User created");
+          toast.success("User created");
+          navigate("/user/singin");
+          ClearData();
+        }
       }
+    } catch (error) {
+      console.log("User Register problem:" + error);
+    } finally {
+      setLoader(false);
     }
   };
   return (
@@ -147,7 +154,11 @@ function Signup() {
               className="w-full rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-2.5 transition-colors mt-2"
               onClick={handleFormSubmit}
             >
-              Sign up
+              {loading ? (
+                <span className="loading loading-spinner loading-xl"></span>
+              ) : (
+                "Sign up"
+              )}
             </button>
           </form>
         </div>

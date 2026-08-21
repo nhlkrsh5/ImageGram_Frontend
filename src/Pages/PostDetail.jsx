@@ -58,8 +58,13 @@ function PostDetail() {
   };
 
   const handleLikeEvent = async (id) => {
-    alert("liked" + id);
+    //alert("liked" + id);
+    setLoader(true);
     try {
+      if (user.username == "" && tocken == "") {
+        alert("Please login your account.");
+        navigate("/user/singin");
+      }
       const data = await LikeOnAPost(id, tocken);
 
       if (data.message == "ALready liked") {
@@ -70,11 +75,14 @@ function PostDetail() {
       }
     } catch (error) {
       console.log("Error from like:", error);
+    } finally {
+      setLoader(false);
     }
   };
   return (
     <article className="max-w-3xl mx-auto px-4 py-10">
       {/* Back button */}
+
       <button
         onClick={() => navigate(-1)}
         className="text-sm text-gray-500 hover:text-blue-600 mb-6 flex items-center gap-1"
@@ -131,7 +139,13 @@ function PostDetail() {
               />
             </svg>
           )}
-          <span className="font-medium">{post.likes.length}</span>
+          <span className="font-medium">
+            {loading ? (
+              <span className="loading loading-spinner loading-xl"></span>
+            ) : (
+              post.likes.length
+            )}
+          </span>
         </button>
 
         {/* Comment Button */}
@@ -158,7 +172,11 @@ function PostDetail() {
             onClick={() => handleDeleteButton(post._id)}
             className="cursor-pointer px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition duration-300"
           >
-            {loading ? "Deleting..." : "Delete"}
+            {loading ? (
+              <span className="loading loading-spinner loading-xl"></span>
+            ) : (
+              "Delete"
+            )}
           </button>
         )}
         {user.role == "admin" && (
@@ -214,7 +232,10 @@ function PostDetail() {
         <div className="space-y-4">
           {post.comments.map((val) => {
             return (
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50">
+              <div
+                key={val._id}
+                className="border border-gray-100 rounded-xl p-4 bg-gray-50"
+              >
                 <div className="flex items-center gap-2 mb-1">
                   <img
                     src={UserImage}
