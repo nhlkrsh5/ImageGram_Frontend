@@ -51,14 +51,6 @@ function Home(params) {
                 <p className="text-sm text-base-content/60 leading-relaxed">
                   {post.caption}
                 </p>
-                <div className="card-actions justify-end mt-4 gap-2">
-                  <button className="btn btn-sm btn-outline btn-primary rounded-full px-4">
-                    Like
-                  </button>
-                  <button className="btn btn-sm btn-primary rounded-full px-4">
-                    Comment
-                  </button>
-                </div>
               </div>
             </div>
           );

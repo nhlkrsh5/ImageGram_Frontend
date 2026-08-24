@@ -54,3 +54,22 @@ export const LikeOnAPost = async (postId,tocken) => {
         throw error
     }
 }
+
+export const PostComment  =async (con,postId,tocken)=>{
+   
+    try {
+       const response = await axios.post(
+        `https://imagegram-2-pi20.onrender.com/api/v1/post/${postId}/comment`,
+        {content: con},
+        {
+            headers: {
+                'x-access-tocken': tocken
+            }
+        }
+       );
+       return response.data;
+    } catch (error) {
+        throw error
+    }
+   
+}

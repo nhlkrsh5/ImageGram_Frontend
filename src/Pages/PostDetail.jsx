@@ -5,7 +5,7 @@ import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
 import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
 import { useContext, useEffect, useState } from "react";
-import { LikeOnAPost, PostDelete } from "../APIs/postAPIs.js";
+import { LikeOnAPost, PostComment, PostDelete } from "../APIs/postAPIs.js";
 
 function PostDetail() {
   const { id } = useParams();
@@ -14,6 +14,7 @@ function PostDetail() {
   const { user } = useContext(CurrUser);
   const [loading, setLoader] = useState(false);
   const [like, setLike] = useState(false);
+  const [comment, setComment] = useState("");
 
   let { data, isLoading, isError } = useQuery({
     queryKey: ["SignlePost", id, like],
@@ -77,6 +78,20 @@ function PostDetail() {
       console.log("Error from like:", error);
     } finally {
       setLoader(false);
+    }
+  };
+
+  const handleComments = async (id) => {
+    try {
+      const data = await PostComment(comment, id, tocken);
+
+      if (data) {
+        alert("Commented...");
+      } else {
+        alert("comment not post");
+      }
+    } catch (error) {
+      console.log("Comment post error", error);
     }
   };
   return (
@@ -149,7 +164,11 @@ function PostDetail() {
         </button>
 
         {/* Comment Button */}
-        <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200">
+        {/* The button's popoverTarget attribute points to the modal's ID. ID must be unique for each modal */}
+        <button
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-200"
+          popoverTarget="my-modal-1"
+        >
           <svg
             className="w-5 h-5 fill-none stroke-current"
             viewBox="0 0 24 24"
@@ -164,7 +183,34 @@ function PostDetail() {
           </svg>
           <span className="font-medium">Comment</span>
         </button>
+
+        <div className="modal" id="my-modal-1" popover="auto">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Comment!!</h3>
+            <p className="py-4">
+              {/** content for comment */}
+              <input
+                type="text"
+                placeholder="Write content for text"
+                className="input"
+                onChange={(e) => setComment(e.target.value)}
+              />
+            </p>
+            <div className="modal-action">
+              {/**Post comment button */}
+              <button
+                onClick={() => handleComments(post._id)}
+                className="btn btn-primary"
+                popoverTarget="my-modal-1"
+                popoverTargetAction="hide"
+              >
+                post comment
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+      <input type="hidden" name="comm_btn" id="btn" />
       <span>
         {user.email == data.data.user.email && (
           <button
