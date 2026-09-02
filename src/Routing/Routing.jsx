@@ -11,6 +11,7 @@ import { CurrUser } from "../context/GlobleStates";
 import { useState } from "react";
 import Profile from "../Pages/user/Profile";
 import PostUplaod from "../Pages/post/PostUplaod";
+import ALL_User from "../Pages/user/ALL_User";
 
 function Routing(params) {
   const Queryclient = new QueryClient();
@@ -30,6 +31,7 @@ function Routing(params) {
               <Route path="/user/singin" element={<SignIn />} />
               <Route path="/user/profile" element={<Profile />} />
               <Route path="/post/upload" element={<PostUplaod />} />
+              <Route path="/users" element={<ALL_User />} />
             </Routes>
           </QueryClientProvider>
         </UserTocken.Provider>

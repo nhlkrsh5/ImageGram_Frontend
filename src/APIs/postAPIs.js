@@ -73,3 +73,20 @@ export const PostComment  =async (con,postId,tocken)=>{
     }
    
 }
+
+export const BanAUserPost = async (postId,tocken) => {
+    try {
+        const response = await axios.put(
+            `https://imagegram-2-pi20.onrender.com/api/v1/user/${postId}`,
+            {},
+            {
+                headers: {
+                    'x-access-tocken': tocken
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error
+    }
+}

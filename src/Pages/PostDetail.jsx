@@ -5,7 +5,12 @@ import Loader from "./Loader.jsx";
 import UserImage from "../assets/User.avif";
 import { CurrUser, UserTocken } from "../context/GlobleStates.jsx";
 import { useContext, useEffect, useState } from "react";
-import { LikeOnAPost, PostComment, PostDelete } from "../APIs/postAPIs.js";
+import {
+  BanAUserPost,
+  LikeOnAPost,
+  PostComment,
+  PostDelete,
+} from "../APIs/postAPIs.js";
 
 function PostDetail() {
   const { id } = useParams();
@@ -50,11 +55,18 @@ function PostDetail() {
   };
 
   const handleUpdateButton = async (postId) => {
-    alert("Update" + postId);
+    //alert("Update" + postId);
     try {
+      const data = await BanAUserPost(postId, tocken);
+
+      if (data) {
+        alert("Post Banned...");
+        navigate("/");
+      } else {
+        alert("Not found.");
+      }
     } catch (error) {
       console.log("Update post:", error);
-    } finally {
     }
   };
 

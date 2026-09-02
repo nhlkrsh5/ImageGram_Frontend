@@ -55,3 +55,12 @@ export const GetUserPostANDdetail = async (tocken) => {
         console.log("User deshbod in problem:",error);
     }
 }
+
+export const GetAllUser = async()=>{
+    try {
+        const response = await axios.get("https://imagegram-2-pi20.onrender.com/api/v1/user/Allusers");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

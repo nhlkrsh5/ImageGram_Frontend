@@ -36,6 +36,10 @@ function Profile() {
   const hanglePostUpload = () => {
     naviagte("/post/upload");
   };
+
+  const ToSeeAllUser = () => {
+    naviagte("/users");
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-24">
       {/* Background Pattern */}
@@ -161,6 +165,13 @@ function Profile() {
             </svg>
             <span className="text-center">ADD POST</span>
           </button>
+          {user.role == "admin" && (
+            <div className="mt-10 ml-5 text-amber-600 text-xl">
+              <button onClick={ToSeeAllUser} className="cursor-pointer ">
+                See All user
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Divider */}
