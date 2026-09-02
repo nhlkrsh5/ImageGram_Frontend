@@ -21,6 +21,8 @@ function ALL_User() {
 
         if (res) {
           setData(res.data);
+        } else {
+          console.log("Not fetched");
         }
       } catch (error) {
         console.log("Fetching problme!" + error);
@@ -56,7 +58,7 @@ function ALL_User() {
               </p>
             </div>
             <span className="ml-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-              {data.length + " "}total
+              {data?.length + " "}total
               {/**No of user */}
             </span>
           </div>
@@ -83,7 +85,7 @@ function ALL_User() {
             </div>
             <p className="text-2xl font-semibold text-gray-900 mt-1">
               {/**No of user */}
-              {data.length}
+              {data?.length}
             </p>
           </div>
 
@@ -167,7 +169,9 @@ function ALL_User() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Role
                 </th>
-
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Join Date
                 </th>
@@ -179,7 +183,7 @@ function ALL_User() {
             <tbody className="bg-white divide-y divide-gray-200">
               {/* User 1 - John Doe */}
 
-              {data.map((user) => {
+              {data?.map((user) => {
                 console.log("Hello");
                 return (
                   <tr className="hover:bg-gray-50 transition-colors">
@@ -222,7 +226,11 @@ function ALL_User() {
                         {user.role}
                       </span>
                     </td>
-
+                    <td className="px-4 py-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {user.status}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <svg
