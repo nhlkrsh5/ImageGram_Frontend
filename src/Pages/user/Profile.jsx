@@ -10,27 +10,33 @@ function Profile() {
   let { tocken, setTocken } = useContext(UserTocken);
   const [data, setddata] = useState();
   let { user, setUser } = useContext(CurrUser);
+  const storedTocken = localStorage.getItem("authToken");
+  const storedUserString = localStorage.getItem("userInfo");
+  const storedUser = JSON.parse(storedUserString);
   const naviagte = useNavigate();
 
   useEffect(() => {
-    if (!user || !tocken) {
+    if (storedTocken == null) {
       //alert("Session exepire");
       naviagte("/");
     }
-    console.log("tocken", tocken);
+    console.log("tocken", storedTocken);
 
-    async function GetPost(tocken) {
-      const data1 = await GetUserPostANDdetail(tocken);
+    async function GetPost(storedTocken) {
+      const data1 = await GetUserPostANDdetail(storedTocken);
       setddata(data1.data);
       console.log(data1.data);
     }
-    GetPost(tocken);
+    GetPost(storedTocken);
   }, [tocken]);
 
   const hangleLogout = () => {
     alert("log out");
     setUser({});
     setTocken("");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userInfo");
+    naviagte("/");
   };
 
   const hanglePostUpload = () => {
@@ -70,10 +76,10 @@ function Profile() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  {user.username}
+                  {storedUser.username}
                 </h1>
                 <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-semibold rounded-full uppercase tracking-wider">
-                  {user.role}
+                  {storedUser.role}
                 </span>
               </div>
 
@@ -92,7 +98,7 @@ function Profile() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  <span className="text-sm">{user.email}</span>
+                  <span className="text-sm">{storedUser.email}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
                   <svg
@@ -165,7 +171,7 @@ function Profile() {
             </svg>
             <span className="text-center">ADD POST</span>
           </button>
-          {user.role == "admin" && (
+          {storedUser.role == "admin" && (
             <div className="mt-10 ml-5 text-amber-600 text-xl">
               <button onClick={ToSeeAllUser} className="cursor-pointer ">
                 See All user

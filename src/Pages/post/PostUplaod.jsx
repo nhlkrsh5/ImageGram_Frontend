@@ -14,12 +14,15 @@ function PostUplaod(params) {
   //const [loading, setLoading] = useState(false);
   ////console.log("Tcoken from upload:", tocken);
   //console.log("USer from upload", user);
+  const storedTocken = localStorage.getItem("authToken");
+  const storedUserString = localStorage.getItem("userInfo");
+  const storedUser = JSON.parse(storedUserString);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await UploadPost(caption, image, user, tocken);
+      const data = await UploadPost(caption, image, user, storedTocken);
 
       if (data) {
         alert("FIle Uploaded..");

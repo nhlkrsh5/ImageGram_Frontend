@@ -9,6 +9,11 @@ function Navbar(params) {
   const navigate = useNavigate();
   let { user, setUser } = useContext(CurrUser);
   let { tocken, setTocken } = useContext(UserTocken);
+
+  const storedTocken = localStorage.getItem("authToken");
+
+  const storedUserString = localStorage.getItem("userInfo");
+  const storedUser = JSON.parse(storedUserString);
   function UserSignUp() {
     navigate("/user/signup");
   }
@@ -18,6 +23,8 @@ function Navbar(params) {
   }
 
   function userLogout(params) {
+    //console.log("Before:" + storedTocken);
+
     setUser((prevUser) => ({
       ...prevUser,
       username: "",
@@ -25,6 +32,10 @@ function Navbar(params) {
       role: "",
     }));
     setTocken("");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userInfo");
+    // console.log("After:" + storedTocken);
+
     //toast("User Logout..");
   }
 
@@ -45,17 +56,17 @@ function Navbar(params) {
         </div>
         <div className="flex">
           <div className="flex gap-2">
-            {user && user.username == "" && (
+            {storedTocken == null && (
               <>
                 <Button onclick={UserLogin} text="SignIn" type="btn-primary" />
                 <Button onclick={UserSignUp} text="SignUp" type="btn-primary" />
               </>
             )}
-            {user.username && (
+            {storedTocken && storedUser && (
               <div className="dropdown dropdown-end">
                 <div className="flex justify-center">
                   <div className="mt-2">
-                    {user.username && <p>{user.username}</p>}
+                    {storedUser.username && <p>{storedUser.username}</p>}
                   </div>
                   <div
                     tabIndex={0}

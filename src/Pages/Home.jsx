@@ -21,6 +21,9 @@ function Home(params) {
   }
 
   if (data) {
+    const tocken = localStorage.getItem("authToken");
+    console.log("Local", tocken);
+
     console.log(data);
   }
 

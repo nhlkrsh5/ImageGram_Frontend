@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { GetAllUser } from "../../APIs/userAPIs.js";
+import { BanAUser, GetAllUser } from "../../APIs/userAPIs.js";
 import { CurrUser, UserTocken } from "../../context/GlobleStates.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,9 @@ function ALL_User() {
   const naviagte = useNavigate();
   const [data, setData] = useState();
 
+  const storedTocken = localStorage.getItem("authToken");
+  const storedUserString = localStorage.getItem("userInfo");
+  const storedUser = JSON.parse(storedUserString);
   useEffect(() => {
     if ((user.username = "")) {
       naviagte("/");
@@ -30,6 +33,23 @@ function ALL_User() {
     }
     GetUser();
   }, []);
+
+  const UserInactive = async (userId) => {
+    //alert("Ban" + userId);
+    try {
+      const baneduser = await BanAUser(userId, tocken);
+
+      if (baneduser) {
+        alert("Ban" + userId);
+        naviagte("/users");
+      } else {
+        alert("Not found" + userId);
+        naviagte("/users");
+      }
+    } catch (error) {
+      console.log("Banned user problme!" + error);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
@@ -195,8 +215,8 @@ function ALL_User() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold text-sm">
-                          SS
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold text-xl">
+                          {user.username[0]}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
@@ -263,6 +283,30 @@ function ALL_User() {
                               strokeLinejoin="round"
                               strokeWidth="2"
                               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => UserInactive(user._id)}
+                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M18 6L6 18"
                             />
                           </svg>
                         </button>

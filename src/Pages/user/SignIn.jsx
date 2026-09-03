@@ -23,6 +23,7 @@ function SignIn(params) {
 
     if (data) {
       setTocken(data.data);
+      localStorage.setItem("authToken", data.data);
     }
 
     console.log(data.data);
@@ -39,19 +40,31 @@ function SignIn(params) {
 
         console.log(data);
         if (!data) {
+          localStorage.removeItem("authToken");
           throw new Error("User not found!");
         } else {
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify({
+              //set user
+              username: data.data.username,
+              email: data.data.email,
+              role: data.data.role,
+            }),
+          );
           setUser((prevUser) => ({
             ...prevUser,
             username: data.data.username,
             email: data.data.email,
             role: data.data.role,
           }));
+          localStorage.setItem("authToken", tocken);
         }
         //toast("Welcome Back!");
         navigate("/");
       } catch (error) {
         console.log("Getting user problem:", error);
+        localStorage.removeItem("authToken");
       } finally {
         setLoader(false);
       }
