@@ -26,6 +26,9 @@ function PostDetail() {
     queryFn: () => fetchSinglePost(id),
   });
 
+  const storedTocken = localStorage.getItem("authToken");
+  const storedUserString = localStorage.getItem("userInfo");
+  const storedUser = JSON.parse(storedUserString);
   if (isLoading) {
     return <Loader />;
   }
@@ -39,7 +42,7 @@ function PostDetail() {
     //console.log("PostId:", post._id);
     setLoader(true);
     try {
-      const data = await PostDelete(postId, tocken);
+      const data = await PostDelete(postId, storedTocken);
 
       if (data) {
         console.log("post Deleted:", data);
@@ -57,7 +60,7 @@ function PostDetail() {
   const handleUpdateButton = async (postId) => {
     //alert("Update" + postId);
     try {
-      const data = await BanAUserPost(postId, tocken);
+      const data = await BanAUserPost(postId, storedTocken);
 
       if (data) {
         alert("Post Banned...");
@@ -74,11 +77,11 @@ function PostDetail() {
     //alert("liked" + id);
     setLoader(true);
     try {
-      if (user.username == "" && tocken == "") {
+      if (storedUser.username == "" || storedTocken == null) {
         alert("Please login your account.");
         navigate("/user/singin");
       }
-      const data = await LikeOnAPost(id, tocken);
+      const data = await LikeOnAPost(id, storedTocken);
 
       if (data.message == "ALready liked") {
         setLike(true);
@@ -95,7 +98,7 @@ function PostDetail() {
 
   const handleComments = async (id) => {
     try {
-      const data = await PostComment(comment, id, tocken);
+      const data = await PostComment(comment, id, storedTocken);
 
       if (data) {
         alert("Commented...");

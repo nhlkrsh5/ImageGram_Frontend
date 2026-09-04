@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { BanAUser, GetAllUser } from "../../APIs/userAPIs.js";
+import { BanAUser, deleteUser, GetAllUser } from "../../APIs/userAPIs.js";
 import { CurrUser, UserTocken } from "../../context/GlobleStates.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -8,12 +8,13 @@ function ALL_User() {
   let { user } = useContext(CurrUser);
   const naviagte = useNavigate();
   const [data, setData] = useState();
-
+  let [cadmin, setAdmin] = useState(0);
   const storedTocken = localStorage.getItem("authToken");
   const storedUserString = localStorage.getItem("userInfo");
   const storedUser = JSON.parse(storedUserString);
+
   useEffect(() => {
-    if ((user.username = "")) {
+    if (storedUser == {} || storedTocken == null) {
       naviagte("/");
     }
 
@@ -37,17 +38,33 @@ function ALL_User() {
   const UserInactive = async (userId) => {
     //alert("Ban" + userId);
     try {
-      const baneduser = await BanAUser(userId, tocken);
+      const baneduser = await BanAUser(userId, storedTocken);
 
       if (baneduser) {
         alert("Ban" + userId);
         naviagte("/users");
+        window.location.reload();
       } else {
         alert("Not found" + userId);
         naviagte("/users");
       }
     } catch (error) {
       console.log("Banned user problme!" + error);
+    }
+  };
+
+  const handleUserDelete = async (userId) => {
+    try {
+      const deletedUser = await deleteUser(userId, storedTocken);
+
+      if (deletedUser) {
+        alert("Deleted:" + userId);
+        window.location.reload();
+      } else {
+        alert("Not found:" + userId);
+      }
+    } catch (error) {
+      console.log("Deleting user problme!" + error);
     }
   };
   return (
@@ -242,14 +259,27 @@ function ALL_User() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {user.role}
-                      </span>
+                      {user.role == "admin" ? (
+                        <span className="bg-yellow-400 px-3 py-1 rounded-full text-xs font-medium text-white">
+                          {user.role}
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          {user.role}
+                        </span>
+                      )}
                     </td>
+                    {/**bg-blue-100 text-blue-700 */}
                     <td className="px-4 py-3">
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {user.status}
-                      </span>
+                      {user.status == "Active" ? (
+                        <span className=" px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {user.status}
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">
+                          {user.status}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -271,7 +301,10 @@ function ALL_User() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <button
+                          onClick={() => handleUserDelete(user._id)}
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"

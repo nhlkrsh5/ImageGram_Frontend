@@ -80,3 +80,19 @@ export const BanAUser = async (userId,tocken) => {
         throw error;
     }
 }
+
+export const deleteUser = async (userId,tocken) => {
+    try {
+        const response = await axios.delete(
+            `https://imagegram-2-pi20.onrender.com/api/v1/user/${userId}`,
+            {
+                headers: {
+                    'x-access-tocken': tocken
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
